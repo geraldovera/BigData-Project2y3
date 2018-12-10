@@ -16,8 +16,30 @@ tags.show()
 
 #Returns keywords count.
 keywords = spark.sql("select words, count(words) from wordList where words='flu' OR words='zika' OR words='diarrhea' OR words='ebola' OR words='headache' OR words='measles' group by words order by count(words) desc")
-ketwords.show()
+keywords.show()
 
 #Returns the 10 screen names that were most active.
 names = spark.sql("select name, count(name) from names group by name order by count(name) desc")
 names.show()
+
+#Write results to a csv file
+key.write.csv('/home/geraldo_vera/key.csv')
+tags.write.csv('/home/geraldo_vera/tags.csv')
+name.write.csv('/home/geraldo_vera/names.csv')
+keywords.write.csv('/home/geraldo_vera/keywords.csv')
+-------------------------------------------------------------------------------------------------------------------------------------
+#Project 3
+
+#Data analysis for label count.
+df = spark.read.format("com.databricks.spark.csv").option("header", "true").load("/home/geraldo_vera/classifiedData1.csv")
+df.createOrReplaceTempView("labelCount1")
+labels = spark.sql("select PredictedLabel, count(PredictedLabel) from labelCount1 group by PredictedLabel order by count(PredictedLabel) desc")
+labels.show()
+labels.write.csv('/home/geraldo_vera/labelsCount1.csv')
+
+#For model 2
+df2 = spark.read.format("com.databricks.spark.csv").option("header", "true").load("/home/geraldo_vera/classifiedData2.csv")
+df2.createOrReplaceTempView("labelCount2")
+labels2 = spark.sql("select PredictedLabel, count(PredictedLabel) from labelCount2 group by PredictedLabel order by count(PredictedLabel) desc")
+labels2.show()
+labels2.write.csv('/home/geraldo_vera/labelsCount2.csv')
